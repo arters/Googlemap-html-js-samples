@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title></title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3&sensor=false&key="></script>
+
+<style type="text/css">
+.map {
+width: 720px;
+height: 500px;
+}
+</style>
+
+</head>
+<body>
+基本地圖
+<div class="map">
+</div>
+縮放層級：<span id="google_map_zoom" name="google_map_zoom">11</span>
+</body>
+
+<script type="text/javascript">
+/*
+ * declare map as a global variable
+ */
+var map;
+var mapElement = document.getElementsByClassName("map")[0];
+
+var mapCenterLatlng = new google.maps.LatLng('23.157314166605214', '120.59040411040714');
+var markerLatlng = new google.maps.LatLng('23.157314166605214', '120.59040411040714');
+var gmapZoom = 11;
+
+/*
+ * use google maps api built-in mechanism to attach dom events
+ */
+google.maps.event.addDomListener(window, "load", function () {
+  /*
+   * create map
+   */
+  var map = new google.maps.Map(mapElement, {
+    center: mapCenterLatlng,
+    zoom: gmapZoom,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  /*
+   * create infowindow (which will be used by markers)
+   */
+  var infoWindow = new google.maps.InfoWindow();
+
+  /*
+   * marker creater function (acts as a closure for html parameter)
+   */
+  function createMarker(options, html) {
+    var marker = new google.maps.Marker(options);
+    if (html) {
+      google.maps.event.addListener(marker, "click", function () {
+        infoWindow.setContent(html);
+        infoWindow.open(options.map, this);
+      });
+    }
+    return marker;
+  }
+
+  /*
+   * add markers to map
+   */
+  var marker = createMarker({
+    position: markerLatlng,
+    map: map
+  }, "<h1>Marker 1</h1><p>This is marker 1</p>");
+
+  map.addListener('zoom_changed', function() {
+    document.getElementById("google_map_zoom").innerText = map.getZoom();
+  });
+});
+</script>
+
+</html>
